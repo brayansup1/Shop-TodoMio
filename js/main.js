@@ -62,6 +62,10 @@ async function procederPagoBackend() {
 
 function render() {
     const grid = document.getElementById('grid');
+    if (products.length === 0) {
+        grid.innerHTML = '<div class="col-span-full text-center py-10"><i class="fa-solid fa-triangle-exclamation text-4xl text-red-400 mb-3"></i><p class="text-gray-500 font-bold">No se pudieron cargar los productos. Verifica que el servidor (Render) esté encendido.</p></div>';
+        return;
+    }
     grid.innerHTML = products.map(p => {
         const discount = p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
         const outOfStock = p.isOutOfStock === 1;

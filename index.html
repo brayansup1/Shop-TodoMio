@@ -35,11 +35,11 @@
             <!-- Navegación Restaurada -->
             <nav class="hidden md:flex items-center space-x-6 font-semibold text-sm">
                 <a href="#" class="hover:text-gray-200 transition">Inicio</a>
-                <a href="#" class="hover:text-gray-200 transition">Categorías</a>
-                <a href="#" class="text-yellow-300 animate-pulse transition"><i class="fa-solid fa-tag mr-1"></i>Ofertas</a>
-                <a href="#" class="hover:text-gray-200 transition">Mi Cuenta</a>
+                <a href="#grid" onclick="document.getElementById('grid').scrollIntoView({behavior: 'smooth'})" class="hover:text-gray-200 transition cursor-pointer">Categorías</a>
+                <a href="#grid" onclick="document.getElementById('grid').scrollIntoView({behavior: 'smooth'})" class="text-yellow-300 animate-pulse transition cursor-pointer"><i class="fa-solid fa-tag mr-1"></i>Ofertas</a>
+                <a href="login.html" class="hover:text-white text-brandLightBg font-black transition"><i class="fa-solid fa-user-lock"></i> Mi Cuenta</a>
                 <!-- Icono Carrito -->
-                <div class="relative cursor-pointer" id="cartTrigger">
+                <div class="relative cursor-pointer" onclick="document.getElementById('savingsBox').scrollIntoView({behavior: 'smooth'})" id="cartTrigger">
                     <i class="fa-solid fa-cart-shopping text-2xl"></i>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-brandOrange text-white text-[10px] h-5 w-5 flex items-center justify-center rounded-full border-2 border-brandBlue">0</span>
                 </div>
