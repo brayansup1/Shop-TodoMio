@@ -101,53 +101,45 @@
             </div>
         </section>
 
-        <!-- LAYOUT PRINCIPAL: Productos (izq.) + Carrito (der.) -->
-        <div class="flex flex-col lg:flex-row gap-8">
+        <!-- GRID DE PRODUCTOS (full width) -->
+        <div>
+            <h2 class="text-2xl font-black mb-6 text-gray-800 border-b-4 border-brandOrange w-fit">🔥 Lo más vendido</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4" id="grid"></div>
+        </div>
 
-            <!-- GRID DE PRODUCTOS -->
-            <div class="lg:w-2/3">
-                <h2 class="text-2xl font-black mb-6 text-gray-800 border-b-4 border-brandOrange w-fit">🔥 Lo más vendido</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="grid"></div>
-            </div>
+        <!-- CARRITO (oculto por defecto, aparece cuando hay productos) -->
+        <div id="cartSidebar" class="hidden mt-10">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 max-w-xl mx-auto">
+                <div class="bg-gray-50 p-5 border-b">
+                    <h3 class="font-black text-xl flex items-center gap-2">
+                        <i class="fa-solid fa-basket-shopping text-brandBlue"></i> Mi Compra
+                    </h3>
+                </div>
 
-            <!-- CARRITO (sticky derecha) -->
-            <div class="lg:w-1/3" id="cartSidebar">
-                <div class="sticky top-20">
-                    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-                        <div class="bg-gray-50 p-5 border-b">
-                            <h3 class="font-black text-xl flex items-center gap-2">
-                                <i class="fa-solid fa-basket-shopping text-brandBlue"></i> Mi Compra
-                            </h3>
-                        </div>
+                <div id="savingsBox" class="hidden bg-green-500 text-white p-3 text-center font-black text-sm animate-pulse">
+                    ¡ESTÁS AHORRANDO <span id="savingsVal"></span>! 🥳
+                </div>
 
-                        <div id="savingsBox" class="hidden bg-green-500 text-white p-3 text-center font-black text-sm animate-pulse">
-                            ¡ESTÁS AHORRANDO <span id="savingsVal"></span>! 🥳
-                        </div>
+                <div id="cartItems" class="p-4 max-h-80 overflow-y-auto no-scrollbar space-y-4"></div>
 
-                        <div id="cartItems" class="p-4 max-h-80 overflow-y-auto no-scrollbar space-y-4">
-                            <p class="text-center text-gray-400 py-10 font-bold">Tu carrito está vacío</p>
-                        </div>
-
-                        <div class="p-6 bg-gray-50 space-y-3">
-                            <div class="flex justify-between text-gray-400 font-bold text-sm">
-                                <span>Antes:</span>
-                                <span id="subtotal" class="line-through">$0</span>
-                            </div>
-                            <div class="flex justify-between text-successGreen font-black">
-                                <span>Envío:</span>
-                                <span>¡GRATIS!</span>
-                            </div>
-                            <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                                <span class="font-black text-gray-800 text-lg">TOTAL:</span>
-                                <span id="total" class="text-3xl font-black text-brandOrange tracking-tighter">$0</span>
-                            </div>
-                            <button id="payBtn" disabled
-                                class="w-full bg-gray-300 text-gray-500 py-4 rounded-full font-black text-lg uppercase shadow-xl transition-all mt-4 cursor-not-allowed"
-                                onclick="procederPagoBackend()">
-                                Proceder al Pago
-                            </button>
-                        </div>
+                <div class="p-6 bg-gray-50 space-y-3">
+                    <div class="flex justify-between text-gray-400 font-bold text-sm">
+                        <span>Antes:</span>
+                        <span id="subtotal" class="line-through">$0</span>
                     </div>
+                    <div class="flex justify-between text-successGreen font-black">
+                        <span>Envío:</span>
+                        <span>¡GRATIS!</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                        <span class="font-black text-gray-800 text-lg">TOTAL:</span>
+                        <span id="total" class="text-3xl font-black text-brandOrange tracking-tighter">$0</span>
+                    </div>
+                    <button id="payBtn" disabled
+                        class="w-full bg-gray-300 text-gray-500 py-4 rounded-full font-black text-lg uppercase shadow-xl transition-all mt-4 cursor-not-allowed"
+                        onclick="procederPagoBackend()">
+                        Proceder al Pago
+                    </button>
                 </div>
             </div>
         </div>

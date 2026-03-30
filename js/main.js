@@ -171,16 +171,12 @@ function renderProducts(list) {
 // CARRITO
 // ==========================================
 function updateCartToggle(isOpen) {
-    const cartPanel = document.getElementById('cartPanel');
-    const cartFab = document.getElementById('cartFab');
-    if (!cartPanel) return;
-    if (isOpen && cart.length > 0) {
-        cartPanel.classList.remove('hidden');
-        cartFab && cartFab.classList.add('hidden');
+    const cartSidebar = document.getElementById('cartSidebar');
+    if (!cartSidebar) return;
+    if (cart.length > 0) {
+        cartSidebar.classList.remove('hidden');
     } else {
-        cartPanel.classList.add('hidden');
-        // Mostrar FAB solo si hay items
-        cartFab && (cart.length > 0 ? cartFab.classList.remove('hidden') : cartFab.classList.add('hidden'));
+        cartSidebar.classList.add('hidden');
     }
 }
 
