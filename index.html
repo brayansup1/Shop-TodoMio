@@ -13,41 +13,48 @@
 </head>
 <body class="text-gray-800">
 
+    <!-- Barra de oferta -->
     <div class="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[11px] md:text-sm font-black text-center py-2 px-4 shadow-md flex justify-center items-center gap-2 sticky top-0 z-50">
         <i class="fa-solid fa-fire animate-bounce"></i>
         <span>¡LIQUIDACIÓN! HASTA 50% DE DESCUENTO SOLO POR HOY</span>
-        <span class="bg-white text-red-600 px-2 py-0.5 rounded ml-2 shadow-inner">23:59:59</span>
+        <span id="countdown" class="bg-white text-red-600 px-2 py-0.5 rounded ml-2 shadow-inner">23:59:59</span>
     </div>
 
-    <header class="bg-brandBlue text-white shadow-lg">
+    <header class="bg-brandBlue text-white shadow-lg sticky top-8 z-40">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
             <!-- Logo -->
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-2 flex-shrink-0">
                 <span class="text-3xl font-black tracking-tighter">TodoMío</span>
             </div>
 
-            <!-- Buscador -->
-            <div class="flex-1 max-w-xl mx-auto relative search-wrapper">
-                <input type="text" id="searchInput" placeholder="Busca ofertas increíbles..." autocomplete="off" class="w-full px-5 py-2.5 rounded-full text-gray-800 text-sm focus:outline-none shadow-inner">
-                <div id="searchDropdown" class="hidden absolute left-0 right-0 top-12 bg-white rounded-2xl shadow-2xl z-50 max-h-80 overflow-y-auto border border-gray-100"></div>
+            <!-- Barra de búsqueda con suggestions -->
+            <div class="w-full md:flex-1 md:max-w-xl relative search-wrapper">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-gray-400 z-10"></i>
+                <input type="text" id="searchInput" autocomplete="off"
+                    class="w-full pl-11 pr-4 py-2.5 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-brandOrange/40 text-sm"
+                    placeholder="Busca ofertas increíbles...">
+                <!-- Dropdown de sugerencias -->
+                <div id="searchDropdown" class="hidden absolute left-0 right-0 top-12 bg-white rounded-2xl shadow-2xl z-50 max-h-72 overflow-y-auto border border-gray-100"></div>
             </div>
 
-            <!-- Navegación Restaurada -->
-            <nav class="hidden md:flex items-center space-x-6 font-semibold text-sm">
+            <!-- Navegación -->
+            <nav class="hidden md:flex items-center space-x-6 font-semibold text-sm flex-shrink-0">
                 <a href="#" class="hover:text-gray-200 transition">Inicio</a>
-                <a href="#grid" onclick="document.getElementById('grid').scrollIntoView({behavior: 'smooth'})" class="hover:text-gray-200 transition cursor-pointer">Categorías</a>
-                <a href="#grid" onclick="document.getElementById('grid').scrollIntoView({behavior: 'smooth'})" class="text-yellow-300 animate-pulse transition cursor-pointer"><i class="fa-solid fa-tag mr-1"></i>Ofertas</a>
-                <!-- Mi Cuenta dinamico -->
+                <a href="#grid" onclick="document.getElementById('grid').scrollIntoView({behavior:'smooth'}); return false;" class="hover:text-gray-200 transition cursor-pointer">Categorías</a>
+                <a href="#grid" onclick="document.getElementById('grid').scrollIntoView({behavior:'smooth'}); return false;" class="text-yellow-300 animate-pulse transition cursor-pointer">
+                    <i class="fa-solid fa-tag mr-1"></i>Ofertas
+                </a>
+
+                <!-- Mi Cuenta (dinámico) -->
                 <div id="userMenuWrapper" class="relative">
-                    <!-- Si está logueado -->
-                    <div id="userLoggedIn" class="hidden items-center gap-2 cursor-pointer group">
+                    <!-- Logueado -->
+                    <div id="userLoggedIn" class="hidden items-center gap-2 cursor-pointer">
                         <button onclick="toggleUserMenu()" class="flex items-center gap-2 hover:text-gray-200 transition font-black">
                             <i class="fa-solid fa-circle-user text-xl"></i>
-                            <span id="headerUserName" class="text-sm max-w-24 truncate"></span>
+                            <span id="headerUserName" class="text-sm max-w-[80px] truncate"></span>
                             <i class="fa-solid fa-chevron-down text-xs"></i>
                         </button>
-                        <!-- Dropdown -->
-                        <div id="userDropdown" class="hidden absolute right-0 top-8 bg-white rounded-2xl shadow-2xl py-2 w-48 z-50 text-gray-700">
+                        <div id="userDropdown" class="hidden absolute right-0 top-9 bg-white rounded-2xl shadow-2xl py-2 w-48 z-50 text-gray-700">
                             <div class="px-4 py-2 border-b border-gray-100">
                                 <p class="text-xs font-black text-gray-800" id="dropdownName"></p>
                                 <p class="text-xs text-gray-400" id="dropdownEmail"></p>
@@ -57,13 +64,14 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Si NO está logueado -->
-                    <a id="userLoggedOut" href="login.html" class="hover:text-white text-brandLightBg font-black transition">
-                        <i class="fa-solid fa-user-lock mr-1"></i> Iniciar Sesión
+                    <!-- No logueado -->
+                    <a id="userLoggedOut" href="login.html" class="hover:text-white font-black transition">
+                        <i class="fa-solid fa-user-lock mr-1"></i> Mi Cuenta
                     </a>
                 </div>
-                <!-- Carrito -->
-                <div class="relative cursor-pointer" onclick="document.getElementById('cartItems').scrollIntoView({behavior: 'smooth'})" id="cartTrigger">
+
+                <!-- Carrito (ícono) -->
+                <div class="relative cursor-pointer" onclick="document.getElementById('cartSidebar').scrollIntoView({behavior:'smooth',block:'nearest'})">
                     <i class="fa-solid fa-cart-shopping text-2xl"></i>
                     <span id="cartCount" class="absolute -top-2 -right-2 bg-brandOrange text-white text-[10px] h-5 w-5 flex items-center justify-center rounded-full border-2 border-brandBlue">0</span>
                 </div>
@@ -72,8 +80,8 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4 py-8">
-        
-        <!-- HERO BANNER RESTAURADO -->
+
+        <!-- HERO BANNER -->
         <section class="bg-brandLightBg rounded-2xl overflow-hidden shadow-sm mb-8 flex flex-col md:flex-row items-center justify-between border border-blue-100">
             <div class="p-8 md:p-12 w-full md:w-1/2">
                 <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4 leading-tight">
@@ -82,65 +90,70 @@
                 <p class="text-xl text-gray-600 mb-6">
                     Todo lo que buscas, a un clic.<br>Compra fácil y rápido.
                 </p>
+                <a href="#grid" onclick="document.getElementById('grid').scrollIntoView({behavior:'smooth'}); return false;"
+                   class="inline-block bg-brandOrange text-white font-black px-8 py-3 rounded-full hover:bg-orange-600 transition shadow-lg">
+                    Ver Ofertas <i class="fa-solid fa-arrow-right ml-2"></i>
+                </a>
             </div>
             <div class="w-full md:w-1/2 h-64 md:h-auto overflow-hidden flex justify-end">
-                <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="" class="object-cover h-full w-full max-h-80 rounded-r-2xl" style="object-position: center;">
+                <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                     alt="" class="object-cover h-full w-full max-h-80 rounded-r-2xl" style="object-position: center;">
             </div>
         </section>
 
-        <!-- GRID COMPLETO de productos -->
-        <div class="mb-6">
-            <h2 class="text-2xl font-black mb-1 text-gray-800">🔥 <span class="border-b-4 border-brandOrange">Lo más vendido</span></h2>
-            <p class="text-sm text-gray-400 mb-5">Los productos favoritos de nuestros clientes</p>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" id="grid"></div>
-        </div>
+        <!-- LAYOUT PRINCIPAL: Productos (izq.) + Carrito (der.) -->
+        <div class="flex flex-col lg:flex-row gap-8">
 
-        <!-- PANEL CARRITO (se oculta hasta que se añade algo) -->
-        <div id="cartPanel" class="hidden">
-            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 max-w-lg mx-auto">
-                <div class="bg-gray-50 p-5 border-b flex justify-between items-center">
-                    <h3 class="font-black text-xl flex items-center gap-2">
-                        <i class="fa-solid fa-basket-shopping text-brandBlue"></i> Mi Compra
-                    </h3>
-                    <button onclick="updateCartToggle(false)" class="text-gray-400 hover:text-gray-700 transition text-xl">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-                
-                <div id="savingsBox" class="hidden bg-green-500 text-white p-3 text-center font-black text-sm animate-pulse">
-                    ¡ESTÁS AHORRANDO <span id="savingsVal"></span>! 🥳
-                </div>
+            <!-- GRID DE PRODUCTOS -->
+            <div class="lg:w-2/3">
+                <h2 class="text-2xl font-black mb-6 text-gray-800 border-b-4 border-brandOrange w-fit">🔥 Lo más vendido</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="grid"></div>
+            </div>
 
-                <div id="cartItems" class="p-4 max-h-80 overflow-y-auto no-scrollbar space-y-4"></div>
+            <!-- CARRITO (sticky derecha) -->
+            <div class="lg:w-1/3" id="cartSidebar">
+                <div class="sticky top-20">
+                    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+                        <div class="bg-gray-50 p-5 border-b">
+                            <h3 class="font-black text-xl flex items-center gap-2">
+                                <i class="fa-solid fa-basket-shopping text-brandBlue"></i> Mi Compra
+                            </h3>
+                        </div>
 
-                <div class="p-6 bg-gray-50 space-y-3">
-                    <div class="flex justify-between text-gray-400 font-bold text-sm">
-                        <span>Antes:</span>
-                        <span id="subtotal" class="line-through">$0</span>
+                        <div id="savingsBox" class="hidden bg-green-500 text-white p-3 text-center font-black text-sm animate-pulse">
+                            ¡ESTÁS AHORRANDO <span id="savingsVal"></span>! 🥳
+                        </div>
+
+                        <div id="cartItems" class="p-4 max-h-80 overflow-y-auto no-scrollbar space-y-4">
+                            <p class="text-center text-gray-400 py-10 font-bold">Tu carrito está vacío</p>
+                        </div>
+
+                        <div class="p-6 bg-gray-50 space-y-3">
+                            <div class="flex justify-between text-gray-400 font-bold text-sm">
+                                <span>Antes:</span>
+                                <span id="subtotal" class="line-through">$0</span>
+                            </div>
+                            <div class="flex justify-between text-successGreen font-black">
+                                <span>Envío:</span>
+                                <span>¡GRATIS!</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                                <span class="font-black text-gray-800 text-lg">TOTAL:</span>
+                                <span id="total" class="text-3xl font-black text-brandOrange tracking-tighter">$0</span>
+                            </div>
+                            <button id="payBtn" disabled
+                                class="w-full bg-gray-300 text-gray-500 py-4 rounded-full font-black text-lg uppercase shadow-xl transition-all mt-4 cursor-not-allowed"
+                                onclick="procederPagoBackend()">
+                                Proceder al Pago
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex justify-between text-successGreen font-black">
-                        <span>Envío:</span>
-                        <span>¡GRATIS!</span>
-                    </div>
-                    <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                        <span class="font-black text-gray-800 text-lg">TOTAL:</span>
-                        <span id="total" class="text-3xl font-black text-brandOrange tracking-tighter">$0</span>
-                    </div>
-                    <button id="payBtn" disabled class="w-full bg-gray-300 text-gray-500 py-4 rounded-full font-black text-lg uppercase shadow-xl transition-all mt-4 cursor-not-allowed" onclick="procederPagoBackend()">
-                        Proceder al Pago
-                    </button>
                 </div>
             </div>
         </div>
-
-        <!-- FAB: Botón flotante de carrito (aparece cuando hay items y el panel está cerrado) -->
-        <button id="cartFab" onclick="updateCartToggle(true)" class="hidden fixed bottom-6 right-6 z-50 bg-brandOrange text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-orange-600 transition-all active:scale-95">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span id="fabCount" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-black border-2 border-white">0</span>
-        </button>
     </main>
 
-    <!-- FOOTER RESTAURADO -->
+    <!-- FOOTER -->
     <footer class="bg-white border-t mt-12 py-8 text-sm text-gray-500 text-center font-semibold">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
             <p>TodoMío © 2026</p>
@@ -154,17 +167,18 @@
 
     <script src="js/main.js"></script>
     <script>
-        // User menu dropdown
+        // --- Dropdown usuario ---
         function toggleUserMenu() {
             document.getElementById('userDropdown').classList.toggle('hidden');
         }
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
-            if (!document.getElementById('userMenuWrapper').contains(e.target)) {
+            const w = document.getElementById('userMenuWrapper');
+            if (w && !w.contains(e.target)) {
                 document.getElementById('userDropdown').classList.add('hidden');
             }
         });
-        // Update header based on login state
+
+        // --- Estado login en header ---
         (function() {
             if (isCustomerLoggedIn()) {
                 const name = getCustomerName() || 'Mi Cuenta';
@@ -176,6 +190,20 @@
                 document.getElementById('dropdownName').textContent = name;
                 document.getElementById('dropdownEmail').textContent = email;
             }
+        })();
+
+        // --- Countdown Timer ---
+        (function() {
+            let t = 86399;
+            setInterval(() => {
+                t--;
+                const h = String(Math.floor(t / 3600)).padStart(2, '0');
+                const m = String(Math.floor((t % 3600) / 60)).padStart(2, '0');
+                const s = String(t % 60).padStart(2, '0');
+                const el = document.getElementById('countdown');
+                if (el) el.textContent = `${h}:${m}:${s}`;
+                if (t <= 0) t = 86399;
+            }, 1000);
         })();
     </script>
 </body>

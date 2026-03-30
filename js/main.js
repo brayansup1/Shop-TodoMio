@@ -4,15 +4,28 @@ let products = [];
 let cart = [];
 let filtered = [];
 
-// 1. OBTENER PRODUCTOS (GET al Backend)
+// Productos de ejemplo (se usan si el backend no responde)
+const FALLBACK_PRODUCTS = [
+    { id: 1, name: "Audífonos Bluetooth Pro", price: 45000, oldPrice: 95000, img: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300", rating: 5, isOutOfStock: 0 },
+    { id: 2, name: "Sartén Antiadherente", price: 80000, oldPrice: 120000, img: "https://images.unsplash.com/photo-1584990347449-a6e0aa14f24d?w=300", rating: 5, isOutOfStock: 0 },
+    { id: 3, name: "Cafetera de Filtro", price: 95000, oldPrice: 180000, img: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=300", rating: 4, isOutOfStock: 0 },
+    { id: 4, name: "Set Home Goods", price: 45600, oldPrice: null, img: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=300", rating: 4, isOutOfStock: 0 },
+    { id: 5, name: "Hervidor Eléctrico", price: 56000, oldPrice: null, img: "https://images.unsplash.com/photo-1594803738096-7bb13c5ee918?w=300", rating: 5, isOutOfStock: 0 },
+    { id: 6, name: "Sudadera Gris", price: 45000, oldPrice: null, img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=300", rating: 5, isOutOfStock: 0 },
+    { id: 7, name: "Camiseta Básica Navy", price: 33000, oldPrice: 45000, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300", rating: 4, isOutOfStock: 0 },
+    { id: 8, name: "Pack Medias x3", price: 15000, oldPrice: null, img: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=300", rating: 5, isOutOfStock: 0 }
+];
+
+// 1. OBTENER PRODUCTOS (GET al Backend, con fallback)
 async function fetchProductsFromBackend() {
     try {
         const response = await fetch(`${API_URL}/products`);
         if (!response.ok) throw new Error("Error en red");
-        return await response.json();
+        const data = await response.json();
+        return data.length > 0 ? data : FALLBACK_PRODUCTS;
     } catch (error) {
-        console.error("Error conectando al backend.", error);
-        return [];
+        console.warn("Backend offline. Usando productos de ejemplo.", error);
+        return FALLBACK_PRODUCTS;
     }
 }
 
