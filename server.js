@@ -51,6 +51,7 @@ app.post('/v1/checkout', (req, res) => {
 // ==========================================
 
 const activeTokens = new Set();
+const customerTokens = new Map(); // token -> customerId
 const crypto = require('crypto');
 
 // Login de Admin
@@ -63,6 +64,70 @@ app.post('/v1/login', (req, res) => {
         const token = crypto.randomBytes(32).toString('hex');
         activeTokens.add(token);
         res.json({ success: true, token });
+    });
+});
+
+// ==========================================
+// RUTAS DE CLIENTES (AUTH PÚBLICA)
+// ==========================================
+
+// Registro de Cliente
+app.post('/v1/user/register', (req, res) => {
+    const { name, email, password, phone } = req.body;
+    if (!name || !email || !password) {
+        return res.status(400).json({ error: "Nombre, email y contraseña son obligatorios" });
+    }
+    
+    db.run(
+        `INSERT INTO customers (name, email, password, phone) VALUES (?, ?, ?, ?)`,
+        [name, email, password, phone || null],
+        function(err) {
+            if (err) {
+                if (err.message.includes('UNIQUE')) {
+                    return res.status(409).json({ error: "Ya existe una cuenta con ese correo electrónico" });
+                }
+                return res.status(500).json({ error: err.message });
+            }
+            const token = crypto.randomBytes(32).toString('hex');
+            customerTokens.set(token, this.lastID);
+            res.status(201).json({ success: true, token, name, email });
+        }
+    );
+});
+
+// Login de Cliente
+app.post('/v1/user/login', (req, res) => {
+    const { email, password } = req.body;
+    db.get("SELECT * FROM customers WHERE email = ? AND password = ?", [email, password], (err, customer) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!customer) return res.status(401).json({ error: "Correo o contraseña incorrectos" });
+        
+        const token = crypto.randomBytes(32).toString('hex');
+        customerTokens.set(token, customer.id);
+        res.json({ success: true, token, name: customer.name, email: customer.email });
+    });
+});
+
+// Datos del cliente logueado
+app.get('/v1/user/me', (req, res) => {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) return res.status(401).json({ error: "No autorizado" });
+    const token = authHeader.split(' ')[1];
+    const customerId = customerTokens.get(token);
+    if (!customerId) return res.status(401).json({ error: "Token inválido" });
+    
+    db.get("SELECT id, name, email, phone, createdAt FROM customers WHERE id = ?", [customerId], (err, customer) => {
+        if (err || !customer) return res.status(404).json({ error: "Cliente no encontrado" });
+        res.json(customer);
+    });
+});
+
+// Recuperación de contraseña (placeholder - necesita SMTP para producción)
+app.post('/v1/user/forgot-password', (req, res) => {
+    const { email } = req.body;
+    db.get("SELECT id FROM customers WHERE email = ?", [email], (err, customer) => {
+        // Por seguridad siempre respondemos igual (no revelamos si el email existe)
+        res.json({ success: true, message: "Si ese correo está registrado, recibirás instrucciones en breve." });
     });
 });
 

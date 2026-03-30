@@ -3,65 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - TodoMío Admin</title>
+    <title>Mi Cuenta - TodoMío</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="js/tailwind-config.js"></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-active { border-bottom: 3px solid #f47920; color: #f47920; }
+        .social-btn { transition: all 0.2s; }
+        .social-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    </style>
 </head>
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-black text-brandBlue">TodoMío</h1>
-            <p class="text-gray-500 font-bold mt-2">Acceso Administrativo</p>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-brandBlue text-white py-4 px-6 shadow-lg">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <a href="index.html" class="text-2xl font-black tracking-tight">TodoMío</a>
+            <span class="text-sm opacity-75">Tu cuenta segura</span>
         </div>
-        
-        <form id="loginForm" class="space-y-5">
-            <div>
-                <label class="block text-gray-700 font-bold mb-2">Usuario</label>
-                <input type="text" id="username" required class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-brandOrange outline-none" placeholder="admin">
+    </header>
+
+    <main class="flex-1 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+            
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-100">
+                <button id="tabLogin" onclick="switchTab('login')" class="flex-1 py-4 font-black text-sm tab-active">
+                    <i class="fa-solid fa-right-to-bracket mr-2"></i>Iniciar Sesión
+                </button>
+                <button id="tabRegister" onclick="switchTab('register')" class="flex-1 py-4 font-black text-sm text-gray-400">
+                    <i class="fa-solid fa-user-plus mr-2"></i>Crear Cuenta
+                </button>
             </div>
-            <div>
-                <label class="block text-gray-700 font-bold mb-2">Contraseña</label>
-                <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-brandOrange outline-none" placeholder="••••••••">
+
+            <div class="p-8">
+                <!-- Error/Success message -->
+                <div id="alertMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-bold text-center"></div>
+
+                <!-- Botones sociales -->
+                <div class="space-y-3 mb-6">
+                    <button onclick="loginWithGoogle()" class="social-btn w-full flex items-center justify-center gap-3 border-2 border-gray-200 rounded-xl py-3 font-bold text-gray-700 hover:border-gray-300 bg-white">
+                        <img src="https://www.google.com/favicon.ico" class="w-5 h-5">
+                        Continuar con Google
+                    </button>
+                    <button onclick="loginWithFacebook()" class="social-btn w-full flex items-center justify-center gap-3 bg-blue-600 rounded-xl py-3 font-bold text-white hover:bg-blue-700">
+                        <i class="fa-brands fa-facebook text-xl"></i>
+                        Continuar con Facebook
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="flex-1 border-t border-gray-200"></div>
+                    <span class="text-xs text-gray-400 font-bold">O CON TU CORREO</span>
+                    <div class="flex-1 border-t border-gray-200"></div>
+                </div>
+
+                <!-- FORM LOGIN -->
+                <form id="formLogin" onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Correo electrónico</label>
+                        <input type="email" id="loginEmail" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brandOrange focus:outline-none transition" placeholder="tu@correo.com">
+                    </div>
+                    <div class="relative">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
+                        <input type="password" id="loginPass" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brandOrange focus:outline-none transition pr-12" placeholder="••••••••">
+                        <button type="button" onclick="togglePass('loginPass', this)" class="absolute right-4 bottom-3 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                    <div class="text-right">
+                        <button type="button" onclick="switchTab('forgot')" class="text-brandOrange text-sm font-bold hover:underline">¿Olvidaste tu contraseña?</button>
+                    </div>
+                    <button type="submit" id="loginBtn" class="w-full bg-brandOrange text-white font-black py-3.5 rounded-xl hover:bg-orange-600 transition shadow-lg shadow-orange-200">
+                        Iniciar Sesión
+                    </button>
+                </form>
+
+                <!-- FORM REGISTRO -->
+                <form id="formRegister" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nombre completo</label>
+                        <input type="text" id="regName" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brandOrange focus:outline-none transition" placeholder="Juan Pérez">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Correo electrónico</label>
+                        <input type="email" id="regEmail" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brandOrange focus:outline-none transition" placeholder="tu@correo.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Teléfono <span class="text-gray-400 font-normal">(opcional)</span></label>
+                        <input type="tel" id="regPhone" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brandOrange focus:outline-none transition" placeholder="+57 300 000 0000">
+                    </div>
+                    <div class="relative">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Contraseña</label>
+                        <input type="password" id="regPass" required minlength="6" class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brandOrange focus:outline-none transition pr-12" placeholder="Mínimo 6 caracteres">
+                        <button type="button" onclick="togglePass('regPass', this)" class="absolute right-4 bottom-3 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                    <div class="relative">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Confirmar contraseña</label>
+                        <input type="password" id="regPassConfirm" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brandOrange focus:outline-none transition pr-12" placeholder="Repite tu contraseña">
+                        <button type="button" onclick="togglePass('regPassConfirm', this)" class="absolute right-4 bottom-3 text-gray-400 hover:text-gray-600"><i class="fa-solid fa-eye"></i></button>
+                    </div>
+                    <button type="submit" id="regBtn" class="w-full bg-brandOrange text-white font-black py-3.5 rounded-xl hover:bg-orange-600 transition shadow-lg shadow-orange-200">
+                        Crear Cuenta
+                    </button>
+                </form>
+
+                <!-- FORM RECUPERAR -->
+                <form id="formForgot" onsubmit="handleForgot(event)" class="space-y-4 hidden">
+                    <p class="text-sm text-gray-500 font-semibold text-center mb-2">Ingresa tu correo y te enviaremos instrucciones para restablecer tu contraseña.</p>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Correo electrónico</label>
+                        <input type="email" id="forgotEmail" required class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-brandOrange focus:outline-none transition" placeholder="tu@correo.com">
+                    </div>
+                    <button type="submit" class="w-full bg-brandBlue text-white font-black py-3.5 rounded-xl hover:bg-blue-700 transition">
+                        Enviar instrucciones
+                    </button>
+                    <button type="button" onclick="switchTab('login')" class="w-full text-gray-500 font-bold py-2 hover:text-gray-700 transition text-sm">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Volver al Login
+                    </button>
+                </form>
+
+                <!-- Acceso Admin -->
+                <div class="mt-6 pt-4 border-t border-gray-100 text-center">
+                    <a href="#" onclick="showAdminLogin()" class="text-xs text-gray-400 hover:text-gray-600 font-bold transition">
+                        <i class="fa-solid fa-shield-halved mr-1"></i>Acceso Administrador
+                    </a>
+                </div>
             </div>
-            <div id="errorMsg" class="hidden text-red-500 text-sm font-bold text-center">Credenciales inválidas</div>
-            <button type="submit" class="w-full bg-brandOrange text-white font-black py-3 rounded-xl hover:bg-orange-600 transition-colors shadow-lg">
-                Iniciar Sesión
-            </button>
-        </form>
-        <div class="mt-6 text-center">
-            <a href="index.html" class="text-brandBlue font-bold hover:underline"><i class="fa-solid fa-arrow-left"></i> Volver a la Tienda</a>
         </div>
-    </div>
+    </main>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        const API = 'https://shop-todomio.onrender.com/v1';
+
+        // --- TAB NAVIGATION ---
+        function switchTab(tab) {
+            // Hide all forms
+            document.getElementById('formLogin').classList.add('hidden');
+            document.getElementById('formRegister').classList.add('hidden');
+            document.getElementById('formForgot').classList.add('hidden');
+            document.getElementById('tabLogin').className = 'flex-1 py-4 font-black text-sm text-gray-400';
+            document.getElementById('tabRegister').className = 'flex-1 py-4 font-black text-sm text-gray-400';
+            clearAlert();
+
+            if (tab === 'login') {
+                document.getElementById('formLogin').classList.remove('hidden');
+                document.getElementById('tabLogin').className = 'flex-1 py-4 font-black text-sm tab-active';
+            } else if (tab === 'register') {
+                document.getElementById('formRegister').classList.remove('hidden');
+                document.getElementById('tabRegister').className = 'flex-1 py-4 font-black text-sm tab-active';
+            } else if (tab === 'forgot') {
+                document.getElementById('formForgot').classList.remove('hidden');
+            }
+        }
+
+        // --- ALERTS ---
+        function showAlert(msg, type = 'error') {
+            const el = document.getElementById('alertMsg');
+            el.textContent = msg;
+            el.className = `mb-4 p-3 rounded-xl text-sm font-bold text-center ${type === 'error' ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-green-50 text-green-600 border border-green-200'}`;
+            el.classList.remove('hidden');
+        }
+        function clearAlert() {
+            document.getElementById('alertMsg').classList.add('hidden');
+        }
+
+        // --- SHOW/HIDE PASSWORD ---
+        function togglePass(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const isPass = input.type === 'password';
+            input.type = isPass ? 'text' : 'password';
+            btn.innerHTML = isPass ? '<i class="fa-solid fa-eye-slash"></i>' : '<i class="fa-solid fa-eye"></i>';
+        }
+
+        // --- LOGIN HANDLER ---
+        async function handleLogin(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('errorMsg');
-            
+            const btn = document.getElementById('loginBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Iniciando...';
+            btn.disabled = true;
+            clearAlert();
+
             try {
-                const res = await fetch('https://shop-todomio.onrender.com/v1/login', {
+                const res = await fetch(`${API}/user/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({
+                        email: document.getElementById('loginEmail').value,
+                        password: document.getElementById('loginPass').value
+                    })
                 });
-                
                 const data = await res.json();
-                if (data.success && data.token) {
-                    localStorage.setItem('adminToken', data.token);
+                if (data.success) {
+                    localStorage.setItem('customerToken', data.token);
+                    localStorage.setItem('customerName', data.name);
+                    localStorage.setItem('customerEmail', data.email);
+                    window.location.href = 'index.html';
+                } else {
+                    showAlert(data.error || 'Error al iniciar sesión');
+                }
+            } catch {
+                showAlert('Error de conexión. ¿Está encendido el servidor?');
+            } finally {
+                btn.innerHTML = 'Iniciar Sesión';
+                btn.disabled = false;
+            }
+        }
+
+        // --- REGISTER HANDLER ---
+        async function handleRegister(e) {
+            e.preventDefault();
+            clearAlert();
+            const pass = document.getElementById('regPass').value;
+            const confirm = document.getElementById('regPassConfirm').value;
+            if (pass !== confirm) return showAlert('Las contraseñas no coinciden');
+
+            const btn = document.getElementById('regBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creando cuenta...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API}/user/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('regName').value,
+                        email: document.getElementById('regEmail').value,
+                        password: pass,
+                        phone: document.getElementById('regPhone').value
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('customerToken', data.token);
+                    localStorage.setItem('customerName', data.name);
+                    localStorage.setItem('customerEmail', data.email);
+                    window.location.href = 'index.html';
+                } else {
+                    showAlert(data.error || 'Error al crear la cuenta');
+                }
+            } catch {
+                showAlert('Error de conexión. ¿Está encendido el servidor?');
+            } finally {
+                btn.innerHTML = 'Crear Cuenta';
+                btn.disabled = false;
+            }
+        }
+
+        // --- FORGOT PASSWORD ---
+        async function handleForgot(e) {
+            e.preventDefault();
+            clearAlert();
+            const email = document.getElementById('forgotEmail').value;
+            try {
+                await fetch(`${API}/user/forgot-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                showAlert('Si ese correo está registrado, recibirás instrucciones. (Configura SMTP para correos reales)', 'success');
+            } catch {
+                showAlert('Error de conexión');
+            }
+        }
+
+        // --- SOCIAL LOGIN (placeholders) ---
+        function loginWithGoogle() {
+            showAlert('⚙️ Login con Google requiere configurar OAuth en Google Console. Contáctanos para activarlo.', 'error');
+        }
+        function loginWithFacebook() {
+            showAlert('⚙️ Login con Facebook requiere configurar OAuth en Meta Developers. Contáctanos para activarlo.', 'error');
+        }
+
+        // --- ADMIN ACCESS ---
+        function showAdminLogin() {
+            const email = prompt('⚙️ Acceso Admin\n\nUsuario:');
+            const pass = prompt('Contraseña:');
+            if (!email || !pass) return;
+            fetch(`${API}/login`.replace('/v1', '').replace('onrender.com', 'onrender.com/v1'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: email, password: pass })
+            }).then(r => r.json()).then(d => {
+                if (d.success) {
+                    localStorage.setItem('adminToken', d.token);
                     window.location.href = 'admin.html';
                 } else {
-                    errorMsg.classList.remove('hidden');
+                    alert('Credenciales de admin incorrectas');
                 }
-            } catch (err) {
-                console.error(err);
-                errorMsg.innerText = "Error de conexión al servidor.";
-                errorMsg.classList.remove('hidden');
-            }
-        });
+            });
+        }
+
+        // Si ya está logueado, redirigir
+        if (localStorage.getItem('customerToken')) {
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>

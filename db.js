@@ -50,6 +50,16 @@ function initDB() {
             password TEXT NOT NULL
         )`);
 
+        // Tabla de Clientes (registro público)
+        db.run(`CREATE TABLE IF NOT EXISTS customers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            phone TEXT,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
         // Insertar productos iniciales si la tabla productos está vacía
         db.get("SELECT COUNT(*) as count FROM products", (err, row) => {
             if (row && row.count === 0) {
