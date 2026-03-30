@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+body { font-family: 'Nunito', sans-serif; background-color: #f8fafc; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.card-shadow { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+
+/* AliExpress Style Aesthetics & Tweaks */
+.product-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 12px;
+}
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+}
+.btn-primary {
+    background-color: #f47920;
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #e56b15;
+}
+.out-of-stock-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    background: rgba(229, 62, 62, 0.9);
+    color: white;
+    font-weight: 900;
+    padding: 10px 30px;
+    font-size: 1.5rem;
+    border-radius: 8px;
+    z-index: 20;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    letter-spacing: 2px;
+}
+.img-agotado {
+    opacity: 0.4;
+    filter: grayscale(100%);
+}
