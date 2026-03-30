@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TodoMío - ¡Ofertas Imperdibles!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#5a8bca',
+                        brandOrange: '#f47920',
+                        brandLightBg: '#f2f8fc',
+                        offerRed: '#e53e3e',
+                        successGreen: '#10b981'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+        body { font-family: 'Nunito', sans-serif; background-color: #f8fafc; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .card-shadow { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="bg-gradient-to-r from-red-600 to-orange-500 text-white text-[11px] md:text-sm font-black text-center py-2 px-4 shadow-md flex justify-center items-center gap-2 sticky top-0 z-50">
+        <i class="fa-solid fa-fire animate-bounce"></i>
+        <span>¡LIQUIDACIÓN! HASTA 50% DE DESCUENTO SOLO POR HOY</span>
+        <span class="bg-white text-red-600 px-2 py-0.5 rounded ml-2 shadow-inner">23:59:59</span>
+    </div>
+
+    <header class="bg-brandBlue text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <span class="text-3xl font-black tracking-tighter">TodoMío</span>
+            </div>
+
+            <!-- Buscador -->
+            <div class="w-full md:w-1/2 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-gray-400"></i>
+                <input type="text" class="w-full pl-12 pr-4 py-2.5 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-brandOrange/40" placeholder="Busca ofertas increíbles...">
+            </div>
+
+            <!-- Navegación Restaurada -->
+            <nav class="hidden md:flex items-center space-x-6 font-semibold text-sm">
+                <a href="#" class="hover:text-gray-200 transition">Inicio</a>
+                <a href="#" class="hover:text-gray-200 transition">Categorías</a>
+                <a href="#" class="text-yellow-300 animate-pulse transition"><i class="fa-solid fa-tag mr-1"></i>Ofertas</a>
+                <a href="#" class="hover:text-gray-200 transition">Mi Cuenta</a>
+                <!-- Icono Carrito -->
+                <div class="relative cursor-pointer" id="cartTrigger">
+                    <i class="fa-solid fa-cart-shopping text-2xl"></i>
+                    <span id="cartCount" class="absolute -top-2 -right-2 bg-brandOrange text-white text-[10px] h-5 w-5 flex items-center justify-center rounded-full border-2 border-brandBlue">0</span>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- HERO BANNER RESTAURADO -->
+        <section class="bg-brandLightBg rounded-2xl overflow-hidden shadow-sm mb-8 flex flex-col md:flex-row items-center justify-between border border-blue-100">
+            <div class="p-8 md:p-12 w-full md:w-1/2">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4 leading-tight">
+                    ¡Bienvenido a TodoMío!
+                </h1>
+                <p class="text-xl text-gray-600 mb-6">
+                    Todo lo que buscas, a un clic.<br>Compra fácil y rápido.
+                </p>
+            </div>
+            <div class="w-full md:w-1/2 h-64 md:h-auto overflow-hidden flex justify-end">
+                <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="" class="object-cover h-full w-full max-h-80 rounded-r-2xl" style="object-position: center;">
+            </div>
+        </section>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <div class="lg:w-2/3">
+                <h2 class="text-2xl font-black mb-6 text-gray-800 border-b-4 border-brandOrange w-fit">🔥 Lo más vendido</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="grid"></div>
+            </div>
+
+            <div class="lg:w-1/3">
+                <div class="sticky top-20">
+                    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+                        <div class="bg-gray-50 p-5 border-b">
+                            <h3 class="font-black text-xl flex items-center gap-2">
+                                <i class="fa-solid fa-basket-shopping text-brandBlue"></i> Mi Compra
+                            </h3>
+                        </div>
+                        
+                        <div id="savingsBox" class="hidden bg-green-500 text-white p-3 text-center font-black text-sm animate-pulse">
+                            ¡ESTÁS AHORRANDO <span id="savingsVal"></span>! 🥳
+                        </div>
+
+                        <div id="cartItems" class="p-4 max-h-80 overflow-y-auto no-scrollbar space-y-4">
+                            <p class="text-center text-gray-400 py-10 font-bold">Tu carrito está vacío</p>
+                        </div>
+
+                        <div class="p-6 bg-gray-50 space-y-3">
+                            <div class="flex justify-between text-gray-400 font-bold text-sm">
+                                <span>Antes:</span>
+                                <span id="subtotal" class="line-through">$0</span>
+                            </div>
+                            <div class="flex justify-between text-successGreen font-black">
+                                <span>Envío:</span>
+                                <span>¡GRATIS!</span>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                                <span class="font-black text-gray-800 text-lg">TOTAL:</span>
+                                <span id="total" class="text-3xl font-black text-brandOrange tracking-tighter">$0</span>
+                            </div>
+                            <button id="payBtn" disabled class="w-full bg-gray-300 text-gray-500 py-4 rounded-full font-black text-lg uppercase shadow-xl transition-all mt-4 cursor-not-allowed" onclick="procederPagoBackend()">
+                                Proceder al Pago
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER RESTAURADO -->
+    <footer class="bg-white border-t mt-12 py-8 text-sm text-gray-500 text-center font-semibold">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <p>TodoMío © 2026</p>
+            <div class="flex space-x-6 mt-4 md:mt-0">
+                <a href="#" class="hover:text-brandOrange">Sobre Nosotros</a>
+                <a href="#" class="hover:text-brandOrange">Contacto</a>
+                <a href="#" class="hover:text-brandOrange">Términos</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN BACKEND (Preparado para API)
+        // ==========================================
+        const API_URL = 'https://api.todomio.com/v1'; // Reemplazar con URL real del backend
+
+        let products = [];
+        let cart = [];
+
+        // 1. OBTENER PRODUCTOS (Simula un GET al Backend)
+        async function fetchProductsFromBackend() {
+            try {
+                // Aquí conectarías tu base de datos:
+                // const response = await fetch(`${API_URL}/products`);
+                // return await response.json();
+                
+                // Mientras no haya backend, retornamos estos datos estáticos:
+                return [
+                    { id: 1, name: "Audífonos Bluetooth Pro", price: 45000, oldPrice: 95000, img: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=300", rating: 5 },
+                    { id: 2, name: "Sartén Antiadherente", price: 80000, oldPrice: 120000, img: "https://images.unsplash.com/photo-1584990347449-a6e0aa14f24d?w=300", rating: 5 },
+                    { id: 3, name: "Cafetera de Filtro", price: 95000, oldPrice: 180000, img: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=300", rating: 4 },
+                    { id: 4, name: "Set Home Goods", price: 45600, oldPrice: null, img: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=300", rating: 4 },
+                    { id: 5, name: "Hervidor Eléctrico", price: 56000, oldPrice: null, img: "https://images.unsplash.com/photo-1594803738096-7bb13c5ee918?w=300", rating: 5 },
+                    { id: 6, name: "Sudadera Gris", price: 45000, oldPrice: null, img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=300", rating: 5 },
+                    { id: 7, name: "Camiseta Básica Navy", price: 33000, oldPrice: 45000, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300", rating: 4 },
+                    { id: 8, name: "Pack Medias x3", price: 15000, oldPrice: null, img: "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=300", rating: 5 }
+                ];
+            } catch (error) {
+                console.error("Error conectando al backend:", error);
+                return [];
+            }
+        }
+
+        // 2. PROCESAR ORDEN (Simula un POST al Backend)
+        async function procederPagoBackend() {
+            if(cart.length === 0) return;
+            
+            const btn = document.getElementById('payBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Procesando Pago...`;
+            
+            try {
+                // Objeto estructurado listo para enviarse al backend
+                const orderData = {
+                    items: cart.map(item => ({ productId: item.id, quantity: item.qty })),
+                    totalAmount: cart.reduce((s, i) => s + (i.price * i.qty), 0),
+                    currency: "COP",
+                    timestamp: new Date().toISOString()
+                };
+
+                console.log("Datos listos para enviar al backend:", orderData);
+                
+                // POST al backend (descomentar cuando el backend exista):
+                // await fetch(`${API_URL}/checkout`, {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(orderData)
+                // });
+                
+                // Simulamos el tiempo de respuesta del servidor (1.5 segundos)
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                alert("¡Orden registrada con éxito en el sistema!");
+                cart = [];
+                update();
+            } catch(error) {
+                alert("Error de conexión con el servidor.");
+            } finally {
+                btn.innerHTML = originalText;
+            }
+        }
+
+        // ==========================================
+        // LÓGICA DE INTERFAZ (Frontend)
+        // ==========================================
+
+        function render() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = products.map(p => {
+                const discount = p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
+                
+                let starsHTML = '';
+                for(let i=0; i<5; i++) {
+                    starsHTML += i < (p.rating || 5) ? '<i class="fa-solid fa-star text-yellow-400 text-[10px]"></i>' : '<i class="fa-regular fa-star text-gray-200 text-[10px]"></i>';
+                }
+
+                return `
+                <div class="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm hover:shadow-xl transition-all relative group overflow-hidden flex flex-col">
+                    ${discount ? `<span class="absolute top-3 left-3 bg-red-600 text-white font-black text-[10px] px-2 py-1 rounded-lg z-10 animate-pulse">-${discount}% OFF</span>` : ''}
+                    <div class="h-44 flex items-center justify-center bg-gray-50 rounded-2xl mb-3 p-4">
+                        <img src="${p.img}" class="max-h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform">
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-sm line-clamp-1 w-full">${p.name}</h3>
+                    <div class="mb-2 flex w-full justify-start">${starsHTML}</div>
+                    <div class="mb-4 flex-grow flex flex-col justify-end h-14">
+                        ${p.oldPrice ? `<p class="text-xs text-gray-400 line-through font-bold">${format(p.oldPrice)}</p>` : ''}
+                        <p class="text-xl font-black text-red-600">${format(p.price)}</p>
+                        ${p.oldPrice ? `<p class="text-[10px] text-green-600 font-black uppercase mt-0.5">¡Ahorras ${format(p.oldPrice - p.price)}!</p>` : ''}
+                    </div>
+                    <button onclick="add(${p.id})" class="mt-auto w-full bg-brandOrange text-white font-black py-3 rounded-full hover:bg-orange-600 shadow-lg active:scale-95 transition-all">Añadir</button>
+                </div>`;
+            }).join('');
+        }
+
+        function add(id) {
+            const p = products.find(x => x.id === id);
+            const item = cart.find(x => x.id === id);
+            item ? item.qty++ : cart.push({...p, qty: 1});
+            update();
+        }
+
+        function format(n) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(n); }
+
+        function update() {
+            const container = document.getElementById('cartItems');
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            const total = cart.reduce((s, i) => s + (i.price * i.qty), 0);
+            const sub = cart.reduce((s, i) => s + ((i.oldPrice || i.price) * i.qty), 0);
+
+            document.getElementById('cartCount').innerText = count;
+            document.getElementById('total').innerText = format(total);
+            document.getElementById('subtotal').innerText = format(sub);
+            
+            const savings = sub - total;
+            const sBox = document.getElementById('savingsBox');
+            if(savings > 0) {
+                sBox.classList.remove('hidden');
+                document.getElementById('savingsVal').innerText = format(savings);
+            } else { sBox.classList.add('hidden'); }
+
+            const btn = document.getElementById('payBtn');
+            if(count > 0) {
+                btn.disabled = false;
+                btn.className = "w-full bg-offerRed text-white py-4 rounded-full font-black text-lg uppercase shadow-2xl hover:bg-red-700 transition-all transform hover:scale-105 animate-bounce-short";
+                container.innerHTML = cart.map(i => `
+                    <div class="flex items-center gap-3 border-b border-gray-50 pb-3">
+                        <img src="${i.img}" class="w-12 h-12 rounded bg-gray-50 object-contain">
+                        <div class="flex-grow">
+                            <p class="text-xs font-black truncate w-32">${i.name}</p>
+                            <p class="text-xs font-bold text-brandBlue">${i.qty}x ${format(i.price)}</p>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                btn.disabled = true;
+                btn.className = "w-full bg-gray-300 text-gray-500 py-4 rounded-full font-black text-lg uppercase cursor-not-allowed";
+                container.innerHTML = `<p class="text-center text-gray-400 py-10 font-bold">Tu carrito está vacío</p>`;
+            }
+        }
+
+        // ==========================================
+        // INICIALIZACIÓN (Conexión Frontend - Backend)
+        // ==========================================
+        async function initApp() {
+            // Se puede mostrar un loader aquí mientras carga la base de datos
+            document.getElementById('grid').innerHTML = '<div class="col-span-full text-center py-10 text-gray-400"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i><p>Conectando con el servidor...</p></div>';
+            
+            products = await fetchProductsFromBackend();
+            render();
+            update();
+        }
+
+        // Arrancamos la aplicación
+        initApp();
+    </script>
+</body>
+</html>
