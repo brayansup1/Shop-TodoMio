@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TodoMío Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-black text-brandBlue">TodoMío</h1>
+            <p class="text-gray-500 font-bold mt-2">Acceso Administrativo</p>
+        </div>
+        
+        <form id="loginForm" class="space-y-5">
+            <div>
+                <label class="block text-gray-700 font-bold mb-2">Usuario</label>
+                <input type="text" id="username" required class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-brandOrange outline-none" placeholder="admin">
+            </div>
+            <div>
+                <label class="block text-gray-700 font-bold mb-2">Contraseña</label>
+                <input type="password" id="password" required class="w-full px-4 py-3 rounded-xl border focus:ring-2 focus:ring-brandOrange outline-none" placeholder="••••••••">
+            </div>
+            <div id="errorMsg" class="hidden text-red-500 text-sm font-bold text-center">Credenciales inválidas</div>
+            <button type="submit" class="w-full bg-brandOrange text-white font-black py-3 rounded-xl hover:bg-orange-600 transition-colors shadow-lg">
+                Iniciar Sesión
+            </button>
+        </form>
+        <div class="mt-6 text-center">
+            <a href="index.html" class="text-brandBlue font-bold hover:underline"><i class="fa-solid fa-arrow-left"></i> Volver a la Tienda</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            try {
+                const res = await fetch('http://localhost:3000/v1/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await res.json();
+                if (data.success && data.token) {
+                    localStorage.setItem('adminToken', data.token);
+                    window.location.href = 'admin.html';
+                } else {
+                    errorMsg.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error(err);
+                errorMsg.innerText = "Error de conexión al servidor.";
+                errorMsg.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TodoMío - Panel de Administración</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="text-gray-800">
+    
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-xl flex flex-col hidden md:flex">
+            <div class="bg-brandBlue text-white p-6 text-center shadow-md">
+                <h1 class="text-2xl font-black tracking-tighter">TodoMío Admin</h1>
+                <p class="text-xs font-semibold opacity-80 mt-1">Panel de Control</p>
+            </div>
+            <nav class="flex flex-col gap-2 p-4 mt-4">
+                <button onclick="showTab('products')" id="tabProducts" class="text-left px-4 py-3 rounded-xl font-bold transition-all bg-brandBlue text-white shadow-md">
+                    <i class="fa-solid fa-box w-6"></i> Productos
+                </button>
+                <button onclick="showTab('orders')" id="tabOrders" class="text-left px-4 py-3 rounded-xl font-bold transition-all text-gray-500 hover:bg-gray-50">
+                    <i class="fa-solid fa-clipboard-list w-6"></i> Pedidos
+                </button>
+                <div class="mt-auto space-y-2">
+                    <a href="index.html" class="block text-left px-4 py-3 rounded-xl font-bold transition-all text-gray-500 hover:bg-gray-50">
+                        <i class="fa-solid fa-store w-6"></i> Tienda
+                    </a>
+                    <button onclick="logout()" class="w-full text-left px-4 py-3 rounded-xl font-bold transition-all text-red-500 hover:bg-red-50">
+                        <i class="fa-solid fa-right-from-bracket w-6"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-x-hidden overflow-y-auto">
+            <header class="bg-white shadow px-6 py-4 flex justify-between items-center md:hidden">
+                <h1 class="text-xl font-black text-brandBlue">TodoMío Admin</h1>
+                <a href="index.html"><i class="fa-solid fa-store text-gray-400 text-xl"></i></a>
+            </header>
+
+            <div class="p-6 md:p-10 max-w-6xl mx-auto">
+
+                <!-- Vista: PRODUCTOS -->
+                <div id="viewProducts">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <h2 class="text-3xl font-black text-gray-800 border-b-4 border-brandOrange pb-1">Catálogo de Productos</h2>
+                        <button onclick="openModal()" class="bg-brandOrange text-white px-6 py-3 rounded-xl font-black shadow-lg hover:bg-orange-600 transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Añadir Producto
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-500 font-bold border-b border-gray-200">
+                                    <th class="p-4">Imagen</th>
+                                    <th class="p-4">Nombre</th>
+                                    <th class="p-4">Precio Actual</th>
+                                    <th class="p-4">Precio Antiguo</th>
+                                    <th class="p-4 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <tr><td colspan="5" class="p-6 text-center text-gray-400">Cargando productos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Vista: PEDIDOS -->
+                <div id="viewOrders" class="hidden">
+                    <h2 class="text-3xl font-black text-gray-800 border-b-4 border-brandOrange pb-1 mb-6 w-fit">Órdenes y Pedidos</h2>
+                    
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-500 font-bold border-b border-gray-200">
+                                    <th class="p-4">ID</th>
+                                    <th class="p-4">Cliente</th>
+                                    <th class="p-4">Total</th>
+                                    <th class="p-4">Estado</th>
+                                    <th class="p-4">Fecha</th>
+                                    <th class="p-4 text-center">Detalles</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <tr><td colspan="6" class="p-6 text-center text-gray-400">Cargando pedidos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL PRODUCTOS -->
+    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all">
+            <div class="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
+                <h3 id="modalTitle" class="text-xl font-black text-gray-800">Añadir Producto</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form id="productForm" onsubmit="saveProduct(event)" class="p-6">
+                <input type="hidden" id="productId">
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nombre del producto</label>
+                        <input type="text" id="pName" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-brandOrange focus:outline-none">
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="w-1/2">
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Precio Actual</label>
+                            <input type="number" id="pPrice" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-brandOrange focus:outline-none">
+                        </div>
+                        <div class="w-1/2">
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Precio Antiguo</label>
+                            <input type="number" id="pOldPrice" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-brandOrange focus:outline-none placeholder-gray-300" placeholder="Dejar vacío si no hay">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">URL de la Imagen</label>
+                        <input type="url" id="pImg" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-brandOrange focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Calificación (1-5)</label>
+                        <input type="number" min="1" max="5" id="pRating" required value="5" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-brandOrange focus:outline-none">
+                    </div>
+                    
+                    <div class="flex items-center pt-2">
+                        <input type="checkbox" id="pIsOutOfStock" class="w-5 h-5 text-brandOrange border-gray-300 rounded focus:ring-brandOrange outline-none">
+                        <label for="pIsOutOfStock" class="ml-2 block text-sm font-bold text-red-500">Marcar como Agotado (No disponible para compra)</label>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex gap-3">
+                    <button type="button" onclick="closeModal()" class="w-1/2 px-4 py-3 bg-gray-100 text-gray-600 font-black rounded-xl hover:bg-gray-200">Cancelar</button>
+                    <button type="submit" class="w-1/2 px-4 py-3 bg-brandBlue text-white font-black rounded-xl hover:bg-blue-600 shadow-md">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DETALLE PEDIDO -->
+    <div id="orderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-xl font-black text-gray-800">Detalle del Pedido #<span id="oId"></span></h3>
+                <button onclick="closeOrderModal()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4 text-sm bg-gray-50 p-4 rounded-xl">
+                    <div><span class="font-bold">Cliente:</span> <span id="oName"></span></div>
+                    <div><span class="font-bold">Email:</span> <span id="oEmail"></span></div>
+                    <div><span class="font-bold">Teléfono:</span> <span id="oPhone"></span></div>
+                    <div><span class="font-bold">Dirección:</span> <span id="oAddress"></span>, <span id="oCity"></span></div>
+                </div>
+                
+                <div>
+                    <h4 class="font-black text-gray-700 border-b pb-2 mb-2">Productos</h4>
+                    <ul id="oItems" class="space-y-2 max-h-40 overflow-y-auto"></ul>
+                </div>
+
+                <div class="flex justify-between items-center border-t pt-4">
+                    <span class="font-black text-lg">Total:</span>
+                    <span id="oTotal" class="text-2xl font-black text-brandOrange"></span>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4">
+                    <button onclick="updateOrderStatus('COMPLETED')" class="px-4 py-2 bg-green-500 text-white font-bold rounded hover:bg-green-600">Marcar Completado</button>
+                    <button onclick="updateOrderStatus('CANCELLED')" class="px-4 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600">Cancelar Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
