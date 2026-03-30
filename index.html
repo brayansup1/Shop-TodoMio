@@ -27,9 +27,9 @@
             </div>
 
             <!-- Buscador -->
-            <div class="w-full md:w-1/2 relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3 text-gray-400"></i>
-                <input type="text" class="w-full pl-12 pr-4 py-2.5 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-brandOrange/40" placeholder="Busca ofertas increíbles...">
+            <div class="flex-1 max-w-xl mx-auto relative search-wrapper">
+                <input type="text" id="searchInput" placeholder="Busca ofertas increíbles..." autocomplete="off" class="w-full px-5 py-2.5 rounded-full text-gray-800 text-sm focus:outline-none shadow-inner">
+                <div id="searchDropdown" class="hidden absolute left-0 right-0 top-12 bg-white rounded-2xl shadow-2xl z-50 max-h-80 overflow-y-auto border border-gray-100"></div>
             </div>
 
             <!-- Navegación Restaurada -->
@@ -88,51 +88,56 @@
             </div>
         </section>
 
-        <div class="flex flex-col lg:flex-row gap-8">
-            
-            <div class="lg:w-2/3">
-                <h2 class="text-2xl font-black mb-6 text-gray-800 border-b-4 border-brandOrange w-fit">🔥 Lo más vendido</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="grid"></div>
-            </div>
+        <!-- GRID COMPLETO de productos -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-black mb-1 text-gray-800">🔥 <span class="border-b-4 border-brandOrange">Lo más vendido</span></h2>
+            <p class="text-sm text-gray-400 mb-5">Los productos favoritos de nuestros clientes</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" id="grid"></div>
+        </div>
 
-            <div class="lg:w-1/3">
-                <div class="sticky top-20">
-                    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-                        <div class="bg-gray-50 p-5 border-b">
-                            <h3 class="font-black text-xl flex items-center gap-2">
-                                <i class="fa-solid fa-basket-shopping text-brandBlue"></i> Mi Compra
-                            </h3>
-                        </div>
-                        
-                        <div id="savingsBox" class="hidden bg-green-500 text-white p-3 text-center font-black text-sm animate-pulse">
-                            ¡ESTÁS AHORRANDO <span id="savingsVal"></span>! 🥳
-                        </div>
+        <!-- PANEL CARRITO (se oculta hasta que se añade algo) -->
+        <div id="cartPanel" class="hidden">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 max-w-lg mx-auto">
+                <div class="bg-gray-50 p-5 border-b flex justify-between items-center">
+                    <h3 class="font-black text-xl flex items-center gap-2">
+                        <i class="fa-solid fa-basket-shopping text-brandBlue"></i> Mi Compra
+                    </h3>
+                    <button onclick="updateCartToggle(false)" class="text-gray-400 hover:text-gray-700 transition text-xl">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                
+                <div id="savingsBox" class="hidden bg-green-500 text-white p-3 text-center font-black text-sm animate-pulse">
+                    ¡ESTÁS AHORRANDO <span id="savingsVal"></span>! 🥳
+                </div>
 
-                        <div id="cartItems" class="p-4 max-h-80 overflow-y-auto no-scrollbar space-y-4">
-                            <p class="text-center text-gray-400 py-10 font-bold">Tu carrito está vacío</p>
-                        </div>
+                <div id="cartItems" class="p-4 max-h-80 overflow-y-auto no-scrollbar space-y-4"></div>
 
-                        <div class="p-6 bg-gray-50 space-y-3">
-                            <div class="flex justify-between text-gray-400 font-bold text-sm">
-                                <span>Antes:</span>
-                                <span id="subtotal" class="line-through">$0</span>
-                            </div>
-                            <div class="flex justify-between text-successGreen font-black">
-                                <span>Envío:</span>
-                                <span>¡GRATIS!</span>
-                            </div>
-                            <div class="flex justify-between items-center pt-4 border-t border-gray-200">
-                                <span class="font-black text-gray-800 text-lg">TOTAL:</span>
-                                <span id="total" class="text-3xl font-black text-brandOrange tracking-tighter">$0</span>
-                            </div>
-                            <button id="payBtn" disabled class="w-full bg-gray-300 text-gray-500 py-4 rounded-full font-black text-lg uppercase shadow-xl transition-all mt-4 cursor-not-allowed" onclick="procederPagoBackend()">
-                                Proceder al Pago
-                            </button>
-                        </div>
+                <div class="p-6 bg-gray-50 space-y-3">
+                    <div class="flex justify-between text-gray-400 font-bold text-sm">
+                        <span>Antes:</span>
+                        <span id="subtotal" class="line-through">$0</span>
                     </div>
+                    <div class="flex justify-between text-successGreen font-black">
+                        <span>Envío:</span>
+                        <span>¡GRATIS!</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-200">
+                        <span class="font-black text-gray-800 text-lg">TOTAL:</span>
+                        <span id="total" class="text-3xl font-black text-brandOrange tracking-tighter">$0</span>
+                    </div>
+                    <button id="payBtn" disabled class="w-full bg-gray-300 text-gray-500 py-4 rounded-full font-black text-lg uppercase shadow-xl transition-all mt-4 cursor-not-allowed" onclick="procederPagoBackend()">
+                        Proceder al Pago
+                    </button>
                 </div>
             </div>
         </div>
+
+        <!-- FAB: Botón flotante de carrito (aparece cuando hay items y el panel está cerrado) -->
+        <button id="cartFab" onclick="updateCartToggle(true)" class="hidden fixed bottom-6 right-6 z-50 bg-brandOrange text-white w-16 h-16 rounded-full shadow-2xl flex items-center justify-center text-2xl hover:bg-orange-600 transition-all active:scale-95">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="fabCount" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-black border-2 border-white">0</span>
+        </button>
     </main>
 
     <!-- FOOTER RESTAURADO -->
